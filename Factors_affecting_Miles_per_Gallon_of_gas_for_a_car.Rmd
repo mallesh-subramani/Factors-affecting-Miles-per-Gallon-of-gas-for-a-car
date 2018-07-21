@@ -1,0 +1,74 @@
+---
+title: "Factors affecting Miles per Gallon of gas for a car"
+author: "MALLESH SUBRAMANI M"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+The basic ideology used in here is to find the relation between mpg of a car, factors affecting it and to fit a model based on the variables used.
+
+
+
+## Basic data analysis
+
+```{r cars, echo=TRUE}
+dim(mtcars)         #finding the dimension of the data 
+names(mtcars)       #getting the names used for the columns
+head(mtcars)        #peeking at first few data
+tail(mtcars)        #peeking at last few data 
+summary(mtcars)     
+str(mtcars)
+boxplot(mpg~am,data=mtcars,xlab='am',ylab='mpg',main='Boxplot of mpg vs am')
+#plot(mpg~hp+wt+am+wt:am,pch = 21, bg = "lightblue", cex = 2,data=mtcars)
+pairs(mtcars,pch = 21, bg = "lightblue", cex = 1)
+
+```
+
+From the basic analysis of data we got to know that it consists of 32 observations and 11 variables recorded.
+
+From the above box plot we can see that cars with automatic transmission has less mpg compared to cars without automatic transmission,that is to say automatic transmission cars consume more fuel than manual transmission cars.
+
+Considering the null hypothesis as type of transmission does not depend on the mpg of the car,considering 95% confidence interval.
+
+Above scatter plot also reveals that mpg not only depends on weight but also on many other variables
+```{r cars1,echo=TRUE}
+#Preforming a basic ttest on the mtcars data set
+t.test(mpg~am,data=mtcars)
+
+```
+The above ttest reveals that mpg is very much dependent on type of transmission because of the very low p value therefore we will have to reject the null hypothesis.
+
+```{r cars2,echo=TRUE}
+fit1<-lm(mpg~am,data=mtcars)
+fit2<-lm(mpg~disp+wt,data=mtcars)
+fit3<-lm(mpg~hp+wt+am+wt:am,data=mtcars)
+fit4<-lm(mpg~disp+wt+hp+qsec+am,data=mtcars)
+fit5<-lm(mpg~disp+wt+hp+qsec+am,data=mtcars)
+##fit1
+summary(fit1)$r.squared
+##fit2
+summary(fit2)$r.squared
+##fit3
+summary(fit3)$r.squared
+##fit4
+summary(fit4)$r.squared
+##fit5
+summary(fit5)$r.squared
+anova(fit1,fit2,fit3,fit4,fit5)
+```
+Hence it can be seen from the different fitted models fit3 has the highest r squared value that is to say it covers more region of values that is also significant from the anova test that residual sum of squares for fit3 is lowest hence we select fit3 for our modeling purpose.
+
+```{r cars3,echo=FALSE}
+par(mfrow=c(2,2))
+plot(fit3,pch = 21, bg = "lightblue", cex = 1)
+
+```
+
+#Conclusion:
+-> From the ttest we can say that mpg depends on the kind of transmission and the difference in mpg for automatic and manual transmission is about 7.25 more for manual transmission cars.
+-> From the plot of fit we can see that residual vs. fitted values lie with a particular range.
+   quantiles vs. residuals plot is also in a given range hence we can conclude that fit3 is the optimized fit for the given      data.
